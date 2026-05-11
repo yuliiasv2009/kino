@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CineWorld — Світ Кіно</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --card: #1a1a24;
+      --gold: #e8b84b;
+      --gold-dim: #c49a2a;
+      --red: #e84b4b;
+      --text: #f0eee8;
+      --muted: #888899;
+      --border: rgba(232,184,75,0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 5%;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    .logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500; letter-spacing: 0.5px;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    #home {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center;
+      padding: 120px 5% 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(232,184,75,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(232,75,75,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(232,184,75,0.12);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 6px 18px; border-radius: 30px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -1px;
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+    .hero-title em { color: var(--gold); font-style: normal; }
+    .hero-sub {
+      max-width: 560px; margin: 24px auto 0;
+      color: var(--muted); font-size: 1.05rem; font-weight: 300;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .hero-cta {
+      margin-top: 40px;
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.45s ease both;
+    }
+    .btn-primary {
+      background: var(--gold); color: #0a0a0f;
+      padding: 13px 32px; border-radius: 6px;
+      font-weight: 600; font-size: 0.95rem;
+      text-decoration: none; letter-spacing: 0.3px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-dim); transform: translateY(-2px); }
+    .btn-secondary {
+      border: 1px solid var(--border); color: var(--text);
+      padding: 13px 32px; border-radius: 6px;
+      font-weight: 500; font-size: 0.95rem;
+      text-decoration: none; letter-spacing: 0.3px;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+    /* Popular films strip */
+    .popular-strip {
+      margin-top: 70px; width: 100%;
+      animation: fadeUp 0.7s 0.6s ease both;
+    }
+    .strip-label {
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 18px;
+    }
+    .strip-cards {
+      display: flex; gap: 16px; overflow-x: auto;
+      padding-bottom: 8px; justify-content: center; flex-wrap: wrap;
+    }
+    .strip-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 20px;
+      min-width: 160px; text-align: left;
+      flex-shrink: 0;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .strip-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+    .strip-card .genre-tag {
+      font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 6px;
+    }
+    .strip-card .film-title { font-weight: 600; font-size: 0.95rem; }
+    .strip-card .film-year { font-size: 0.8rem; color: var(--muted); }
+    .rating { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+    .rating .star { color: var(--gold); font-size: 0.8rem; }
+    .rating .score { font-size: 0.85rem; font-weight: 600; }
+
+    /* ── SECTIONS ── */
+    section { padding: 90px 5%; }
+    .section-header { margin-bottom: 48px; }
+    .section-tag {
+      font-size: 0.72rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold); display: block; margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700; line-height: 1.15;
+    }
+    .section-desc { color: var(--muted); margin-top: 10px; font-size: 0.95rem; max-width: 520px; }
+    .divider {
+      width: 48px; height: 3px; background: var(--gold);
+      margin: 16px 0; border-radius: 2px;
+    }
+
+    /* ── NEWS ── */
+    #news { background: var(--surface); }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .news-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .news-card:hover { transform: translateY(-6px); border-color: var(--gold); }
+    .news-thumb {
+      height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; position: relative;
+    }
+    .news-thumb .new-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--red); color: #fff;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+    }
+    .news-body { padding: 18px; }
+    .news-body .meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
+    .news-body h3 { font-size: 1rem; font-weight: 600; line-height: 1.4; }
+    .news-body p { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+
+    /* ── GENRES ── */
+    #genres {}
+    .genres-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+    .genre-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 16px; text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .genre-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--gold);
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .genre-card:hover::before { opacity: 0.06; }
+    .genre-card:hover { border-color: var(--gold); transform: scale(1.03); }
+    .genre-icon { font-size: 2rem; margin-bottom: 10px; }
+    .genre-name { font-weight: 600; font-size: 0.9rem; }
+    .genre-count { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── TOP FILMS ── */
+    #top { background: var(--surface); }
+    .top-list { display: flex; flex-direction: column; gap: 12px; }
+    .top-item {
+      display: flex; align-items: center; gap: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .top-item:hover { border-color: var(--gold); transform: translateX(6px); }
+    .top-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 900;
+      color: var(--gold); opacity: 0.35;
+      min-width: 38px; text-align: center;
+    }
+    .top-info { flex: 1; }
+    .top-info h3 { font-size: 1rem; font-weight: 600; }
+    .top-info .top-meta { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+    .top-score {
+      background: rgba(232,184,75,0.12);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-weight: 700; font-size: 0.95rem;
+      padding: 6px 14px; border-radius: 6px;
+    }
+
+    /* ── TRAILERS ── */
+    #trailers {}
+    .trailers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .trailer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s;
+      cursor: pointer;
+    }
+    .trailer-card:hover { transform: translateY(-6px); border-color: var(--gold); }
+    .trailer-thumb {
+      height: 150px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; position: relative;
+      background: rgba(255,255,255,0.03);
+    }
+    .play-btn {
+      position: absolute;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(232,184,75,0.9);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; color: #0a0a0f;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .trailer-card:hover .play-btn { transform: scale(1.12); background: var(--gold); }
+    .trailer-body { padding: 16px; }
+    .trailer-body h3 { font-size: 0.95rem; font-weight: 600; }
+    .trailer-body p { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── CONTACTS ── */
+    #contacts { background: var(--surface); }
+    .contact-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+      align-items: start;
+    }
+    .contact-info p { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
+    .contact-detail { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
+    .contact-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: rgba(232,184,75,0.1); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .contact-detail-text small { font-size: 0.72rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+    .contact-detail-text span { display: block; font-size: 0.9rem; font-weight: 500; }
+    .contact-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px;
+      padding: 12px 16px; font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem; outline: none; width: 100%;
+      transition: border-color 0.25s;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus,
+    .contact-form select:focus { border-color: var(--gold); }
+    .contact-form textarea { resize: vertical; min-height: 110px; }
+    .contact-form select option { background: var(--card); }
+    .contact-form button {
+      background: var(--gold); color: #0a0a0f;
+      border: none; border-radius: 8px;
+      padding: 13px 28px; font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      align-self: flex-start;
+    }
+    .contact-form button:hover { background: var(--gold-dim); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #07070b;
+      border-top: 1px solid var(--border);
+      padding: 36px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-weight: 900; color: var(--gold);
+    }
+    .footer-logo span { color: var(--red); }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      font-size: 0.8rem; color: var(--muted); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .contact-wrap { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-title { font-size: clamp(2.2rem, 10vw, 4rem); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Cine<span>World</span></div>
+  <ul class="nav-links">
+    <li><a href="#home">Головна</a></li>
+    <li><a href="#news">Новинки</a></li>
+    <li><a href="#genres">Жанри</a></li>
+    <li><a href="#top">Топ фільмів</a></li>
+    <li><a href="#trailers">Трейлери</a></li>
+    <li><a href="#contacts">Контакти</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-badge">🎬 Твій гід у світі кіно</div>
+  <h1 class="hero-title">Відкрий світ<br><em>великого кіно</em></h1>
+  <p class="hero-sub">Новинки прем'єр, топ рейтинги, популярні жанри та трейлери — все в одному місці.</p>
+  <div class="hero-cta">
+    <a href="#top" class="btn-primary">Топ фільмів</a>
+    <a href="#news" class="btn-secondary">Новинки кіно</a>
+  </div>
+
+  <div class="popular-strip">
+    <p class="strip-label">Популярне зараз</p>
+    <div class="strip-cards">
+      <div class="strip-card">
+        <div class="genre-tag">Фантастика</div>
+        <div class="film-title">Дюна: Частина 2</div>
+        <div class="film-year">2024</div>
+        <div class="rating"><span class="star">★</span><span class="score">8.5</span></div>
+      </div>
+      <div class="strip-card">
+        <div class="genre-tag">Бойовик</div>
+        <div class="film-title">Громадянська війна</div>
+        <div class="film-year">2024</div>
+        <div class="rating"><span class="star">★</span><span class="score">7.8</span></div>
+      </div>
+      <div class="strip-card">
+        <div class="genre-tag">Анімація</div>
+        <div class="film-title">Дикий Робот</div>
+        <div class="film-year">2024</div>
+        <div class="rating"><span class="star">★</span><span class="score">8.2</span></div>
+      </div>
+      <div class="strip-card">
+        <div class="genre-tag">Трилер</div>
+        <div class="film-title">Речовинний доказ</div>
+        <div class="film-year">2024</div>
+        <div class="rating"><span class="star">★</span><span class="score">7.6</span></div>
+      </div>
+      <div class="strip-card">
+        <div class="genre-tag">Комедія</div>
+        <div class="film-title">Суспект</div>
+        <div class="film-year">2025</div>
+        <div class="rating"><span class="star">★</span><span class="score">7.3</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section id="news">
+  <div class="section-header fade-in">
+    <span class="section-tag">Розділ 02</span>
+    <h2 class="section-title">Новинки кіно</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Найсвіжіші прем'єри та гучні релізи, що з'явилися на екранах.</p>
+  </div>
+  <div class="news-grid">
+    <div class="news-card fade-in">
+      <div class="news-thumb" style="background:linear-gradient(135deg,#1a1a2e,#16213e)">
+        🚀<span class="new-badge">НОВИНКА</span>
+      </div>
+      <div class="news-body">
+        <div class="meta">Фантастика · 2025</div>
+        <h3>Марсіанські хроніки</h3>
+        <p>Грандіозна космічна епопея про першу колонізацію Марсу.</p>
+      </div>
+    </div>
+    <div class="news-card fade-in">
+      <div class="news-thumb" style="background:linear-gradient(135deg,#2d1b1b,#4a1515)">
+        🩸<span class="new-badge">НОВИНКА</span>
+      </div>
+      <div class="news-body">
+        <div class="meta">Жахи · 2025</div>
+        <h3>Темний ліс</h3>
+        <p>Психологічний хорор, що не дасть вам спати кілька ночей.</p>
+      </div>
+    </div>
+    <div class="news-card fade-in">
+      <div class="news-thumb" style="background:linear-gradient(135deg,#1b2d1b,#154a15)">
+        💎<span class="new-badge">НОВИНКА</span>
+      </div>
+      <div class="news-body">
+        <div class="meta">Драма · 2025</div>
+        <h3>Остання рука</h3>
+        <p>Зворушлива драма про людські стосунки та вибір.</p>
+      </div>
+    </div>
+    <div class="news-card fade-in">
+      <div class="news-thumb" style="background:linear-gradient(135deg,#2d2d1b,#4a4515)">
+        ⚔️
+      </div>
+      <div class="news-body">
+        <div class="meta">Бойовик · 2025</div>
+        <h3>Залізний кодекс</h3>
+        <p>Нестримний бойовик із неймовірними сценами погонь та боїв.</p>
+      </div>
+    </div>
+    <div class="news-card fade-in">
+      <div class="news-thumb" style="background:linear-gradient(135deg,#1b1b2d,#15154a)">
+        🎭
+      </div>
+      <div class="news-body">
+        <div class="meta">Комедія · 2025</div>
+        <h3>Сусіди з планети Х</h3>
+        <p>Безглуздо смішна комедія про інопланетян у звичайному будинку.</p>
+      </div>
+    </div>
+    <div class="news-card fade-in">
+      <div class="news-thumb" style="background:linear-gradient(135deg,#2d1b2d,#4a154a)">
+        🔍
+      </div>
+      <div class="news-body">
+        <div class="meta">Детектив · 2025</div>
+        <h3>Слід у тіні</h3>
+        <p>Захопливий детектив із несподіваними поворотами сюжету.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GENRES -->
+<section id="genres">
+  <div class="section-header fade-in">
+    <span class="section-tag">Розділ 03</span>
+    <h2 class="section-title">Жанри</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Оберіть жанр, який відповідає вашому настрою цього вечора.</p>
+  </div>
+  <div class="genres-grid">
+    <div class="genre-card fade-in"><div class="genre-icon">💥</div><div class="genre-name">Бойовики</div><div class="genre-count">248 фільмів</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">😂</div><div class="genre-name">Комедії</div><div class="genre-count">315 фільмів</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">😢</div><div class="genre-name">Драми</div><div class="genre-count">420 фільмів</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">🚀</div><div class="genre-name">Фантастика</div><div class="genre-count">189 фільмів</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">👻</div><div class="genre-name">Жахи</div><div class="genre-count">143 фільми</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">❤️</div><div class="genre-name">Романтика</div><div class="genre-count">207 фільмів</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">🔍</div><div class="genre-name">Детективи</div><div class="genre-count">162 фільми</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">🎨</div><div class="genre-name">Анімація</div><div class="genre-count">98 фільмів</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">📜</div><div class="genre-name">Історичні</div><div class="genre-count">134 фільми</div></div>
+    <div class="genre-card fade-in"><div class="genre-icon">🌍</div><div class="genre-name">Документальні</div><div class="genre-count">211 фільмів</div></div>
+  </div>
+</section>
+
+<!-- TOP -->
+<section id="top">
+  <div class="section-header fade-in">
+    <span class="section-tag">Розділ 04</span>
+    <h2 class="section-title">Топ фільмів</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Найкращі фільми за оцінками глядачів із усього світу.</p>
+  </div>
+  <div class="top-list">
+    <div class="top-item fade-in">
+      <div class="top-num">01</div>
+      <div class="top-info">
+        <h3>Втеча з Шоушенку</h3>
+        <div class="top-meta">Драма · 1994 · Френк Дарабонт</div>
+      </div>
+      <div class="top-score">★ 9.3</div>
+    </div>
+    <div class="top-item fade-in">
+      <div class="top-num">02</div>
+      <div class="top-info">
+        <h3>Хрещений батько</h3>
+        <div class="top-meta">Драма / Кримінал · 1972 · Ф.Ф. Коппола</div>
+      </div>
+      <div class="top-score">★ 9.2</div>
+    </div>
+    <div class="top-item fade-in">
+      <div class="top-num">03</div>
+      <div class="top-info">
+        <h3>Темний лицар</h3>
+        <div class="top-meta">Бойовик / Фантастика · 2008 · Крістофер Нолан</div>
+      </div>
+      <div class="top-score">★ 9.0</div>
+    </div>
+    <div class="top-item fade-in">
+      <div class="top-num">04</div>
+      <div class="top-info">
+        <h3>Список Шиндлера</h3>
+        <div class="top-meta">Драма / Біографія · 1993 · Спілберг</div>
+      </div>
+      <div class="top-score">★ 8.9</div>
+    </div>
+    <div class="top-item fade-in">
+      <div class="top-num">05</div>
+      <div class="top-info">
+        <h3>Початок</h3>
+        <div class="top-meta">Фантастика / Трилер · 2010 · Крістофер Нолан</div>
+      </div>
+      <div class="top-score">★ 8.8</div>
+    </div>
+    <div class="top-item fade-in">
+      <div class="top-num">06</div>
+      <div class="top-info">
+        <h3>Форрест Гамп</h3>
+        <div class="top-meta">Драма / Комедія · 1994 · Земекіс</div>
+      </div>
+      <div class="top-score">★ 8.8</div>
+    </div>
+    <div class="top-item fade-in">
+      <div class="top-num">07</div>
+      <div class="top-info">
+        <h3>Матриця</h3>
+        <div class="top-meta">Фантастика · 1999 · Вачовскі</div>
+      </div>
+      <div class="top-score">★ 8.7</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAILERS -->
+<section id="trailers">
+  <div class="section-header fade-in">
+    <span class="section-tag">Розділ 05</span>
+    <h2 class="section-title">Трейлери</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Дивіться офіційні відеоанонси найочікуваніших фільмів сезону.</p>
+  </div>
+  <div class="trailers-grid">
+    <div class="trailer-card fade-in">
+      <div class="trailer-thumb" style="background:linear-gradient(135deg,#0f1923,#1a3040)">
+        🌌<div class="play-btn">▶</div>
+      </div>
+      <div class="trailer-body">
+        <h3>Дюна: Частина 2</h3>
+        <p>Офіційний трейлер · 2024</p>
+      </div>
+    </div>
+    <div class="trailer-card fade-in">
+      <div class="trailer-thumb" style="background:linear-gradient(135deg,#231a0f,#403020)">
+        🤖<div class="play-btn">▶</div>
+      </div>
+      <div class="trailer-body">
+        <h3>Дикий Робот</h3>
+        <p>Трейлер · 2024</p>
+      </div>
+    </div>
+    <div class="trailer-card fade-in">
+      <div class="trailer-thumb" style="background:linear-gradient(135deg,#1a0f23,#302040)">
+        🔮<div class="play-btn">▶</div>
+      </div>
+      <div class="trailer-body">
+        <h3>Громадянська війна</h3>
+        <p>Офіційний трейлер · 2024</p>
+      </div>
+    </div>
+    <div class="trailer-card fade-in">
+      <div class="trailer-thumb" style="background:linear-gradient(135deg,#0f2318,#103020)">
+        🌿<div class="play-btn">▶</div>
+      </div>
+      <div class="trailer-body">
+        <h3>Речовинний доказ</h3>
+        <p>Трейлер · 2024</p>
+      </div>
+    </div>
+    <div class="trailer-card fade-in">
+      <div class="trailer-thumb" style="background:linear-gradient(135deg,#23100f,#401510)">
+        🔥<div class="play-btn">▶</div>
+      </div>
+      <div class="trailer-body">
+        <h3>Марсіанські хроніки</h3>
+        <p>Трейлер · 2025</p>
+      </div>
+    </div>
+    <div class="trailer-card fade-in">
+      <div class="trailer-thumb" style="background:linear-gradient(135deg,#1a1a0f,#302a10)">
+        ⚡<div class="play-btn">▶</div>
+      </div>
+      <div class="trailer-body">
+        <h3>Залізний кодекс</h3>
+        <p>Трейлер · 2025</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTS -->
+<section id="contacts">
+  <div class="section-header fade-in">
+    <span class="section-tag">Розділ 06</span>
+    <h2 class="section-title">Контакти</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Маєте пропозицію або питання? Напишіть нам!</p>
+  </div>
+  <div class="contact-wrap">
+    <div class="contact-info fade-in">
+      <p>Ми відкриті до ваших відгуків і пропозицій щодо нових фільмів, жанрів або покращення сайту.</p>
+      <div class="contact-detail">
+        <div class="contact-icon">📧</div>
+        <div class="contact-detail-text">
+          <small>Email</small>
+          <span>info@cineworld.ua</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">📱</div>
+        <div class="contact-detail-text">
+          <small>Telegram</small>
+          <span>@CineWorldUA</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">🕐</div>
+        <div class="contact-detail-text">
+          <small>Відповідаємо</small>
+          <span>Пн–Пт, 10:00–18:00</span>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form fade-in">
+      <div class="form-row">
+        <input type="text" placeholder="Ваше ім'я"/>
+        <input type="email" placeholder="Email"/>
+      </div>
+      <select>
+        <option value="" disabled selected>Тема повідомлення</option>
+        <option>Пропозиція фільму</option>
+        <option>Помилка на сайті</option>
+        <option>Співпраця</option>
+        <option>Інше</option>
+      </select>
+      <textarea placeholder="Ваше повідомлення..."></textarea>
+      <button type="button">Надіслати ✉️</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Cine<span>World</span></div>
+  <p class="footer-copy">© 2025 CineWorld · Свирид Юлія, 11-А</p>
+  <div class="footer-links">
+    <a href="#home">Головна</a>
+    <a href="#news">Новинки</a>
+    <a href="#top">Топ</a>
+    <a href="#contacts">Контакти</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Smooth nav active
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (scrollY >= s.offsetTop - 100) cur = s.id; });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--gold)' : '';
+    });
+  });
+
+  // Button click feedback
+  document.querySelector('.contact-form button').addEventListener('click', function() {
+    this.textContent = '✅ Надіслано!';
+    this.style.background = '#4a8c4a';
+    setTimeout(() => {
+      this.textContent = 'Надіслати ✉️';
+      this.style.background = '';
+    }, 2500);
+  });
+</script>
+</body>
+</html>
